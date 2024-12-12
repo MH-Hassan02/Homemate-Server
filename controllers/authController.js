@@ -81,7 +81,7 @@ export const login = async (req, res) => {
     }
 
     // Validate password
-    console.log(password, "password")
+    console.log(password, "password");
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid password" });
@@ -109,9 +109,8 @@ export const login = async (req, res) => {
   }
 };
 
-
 export const getUserProfile = async (req, res) => {
-  const user = await User.findById(req.user._id);
+  const user = await User.findById(req.user._id).lean();
 
   if (user) {
     res.json({
@@ -121,11 +120,11 @@ export const getUserProfile = async (req, res) => {
       phone: user.phone,
       email: user.email,
       favorites: user.favorites,
-      profilePicture: user.profilePicture
+      profilePicture: user.profilePicture,
+      isAdmin: user.isAdmin || false,
     });
   } else {
     res.status(404);
     res.json({ message: "User not found" });
   }
 };
-

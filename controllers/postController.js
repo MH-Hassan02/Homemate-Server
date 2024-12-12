@@ -97,6 +97,7 @@ export const createPost = async (req, res) => {
         },
       ],
       area,
+      rating: {}
     });
 
     const createdPost = await post.save();
@@ -141,7 +142,6 @@ export const getPostsByArea = async (req, res) => {
   try {
     const { area } = req.query;
 
-    // Ensure the area is one of the allowed values
     const allowedAreas = ["bahadurabad", "malir", "maymar", "jauhar", "saddar", "gulshan"];
     if (!allowedAreas.includes(area?.toLowerCase())) {
       return res.status(400).json({
@@ -149,7 +149,6 @@ export const getPostsByArea = async (req, res) => {
       });
     }
 
-    // Find posts for the specific area
     const posts = await Post.find({ area: area.toLowerCase() });
     res.status(200).json(posts);
   } catch (error) {
@@ -157,3 +156,48 @@ export const getPostsByArea = async (req, res) => {
     res.status(500).json({ message: "Server error, could not fetch posts by area." });
   }
 };
+
+export const updatePostRating = async (req, res) => {
+  const { id } = req.params;
+  const { cleanliness, accuracy, checkin, communication, location, value } = req.body;
+
+  try {
+    const post = await Post.findById(id);
+    if (!post) return res.status(404).json({ message: "Post not found" });
+    
+    if (!post.rating) {
+      post.rating = {};
+    }
+
+    post.rating.cleanliness = cleanliness || post.rating.cleanliness || 0;
+    post.rating.accuracy = accuracy || post.rating.accuracy || 0;
+    post.rating.checkin = checkin || post.rating.checkin || 0;
+    post.rating.communication = communication || post.rating.communication || 0;
+    post.rating.location = location || post.rating.location || 0;
+    post.rating.value = value || post.rating.value || 0;
+
+    const ratingsArray = [
+      post.rating.cleanliness,
+      post.rating.accuracy,
+      post.rating.checkin,
+      post.rating.communication,
+      post.rating.location,
+      post.rating.value
+    ];
+    
+    const totalRatings = ratingsArray.reduce((acc, rating) => acc + rating, 0);
+    const numberOfRatings = ratingsArray.filter(rating => rating > 0).length;
+    
+    post.rating.main = numberOfRatings > 0 ? totalRatings / numberOfRatings : 0;
+
+    await post.save();
+
+    res.json(post);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+

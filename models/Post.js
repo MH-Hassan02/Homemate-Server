@@ -47,10 +47,6 @@ const postSchema = new mongoose.Schema(
         type: String, // URLs of uploaded images (using Cloudinary, for example)
       },
     ],
-    ratings: {
-      type: Number,
-      default: 0,
-    },
     remarks: {
       type: String,
     },
@@ -74,6 +70,15 @@ const postSchema = new mongoose.Schema(
     featuredAdd: {
       type: Boolean,
       default: false,
+    },
+    rating: {
+      cleanliness: { type: Number, default: 0 },
+      accuracy: { type: Number, default: 0 },
+      checkin: { type: Number, default: 0 },
+      communication: { type: Number, default: 0 },
+      location: { type: Number, default: 0 },
+      value: { type: Number, default: 0 },
+      main: { type: Number, default: 0 },
     },
   },
   { timestamps: true }

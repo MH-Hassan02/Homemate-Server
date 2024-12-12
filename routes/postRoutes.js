@@ -6,6 +6,7 @@ import {
   getPostsByArea,
   getUserPosts,
   updatePost,
+  updatePostRating,
 } from "../controllers/postController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import upload from "../config/multerConfig.js";
@@ -18,6 +19,7 @@ router.get("/post/:id", getPostById);
 router.post("/createpost", protect, upload.array("images", 5), createPost);
 router.put("/editPost/:id", protect, updatePost);
 router.get("/favorites/:userId", protect, getUserFavorites);
-router.get("/search", protect, getPostsByArea);
+router.get("/search", getPostsByArea);
+router.put("/post/:id/rate", protect, updatePostRating)
 
 export default router;

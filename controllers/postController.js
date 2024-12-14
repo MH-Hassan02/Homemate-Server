@@ -142,14 +142,14 @@ export const getPostsByArea = async (req, res) => {
   try {
     const { area } = req.query;
 
-    const allowedAreas = ["bahadurabad", "malir", "maymar", "jauhar", "saddar", "gulshan"];
-    if (!allowedAreas.includes(area?.toLowerCase())) {
+    const allowedAreas = ["Bahadurabad", "Malir", "Maymar", "Jauhar", "Saddar", "Gulshan"];
+    if (!allowedAreas.includes(area)) {
       return res.status(400).json({
-        message: "Invalid area. Allowed areas are bahadurabad, malir, maymar, jauhar, and saddar.",
+        message: "Invalid area. Allowed areas are Bahadurabad, Malir, Maymar, Jauhar, and Saddar.",
       });
     }
 
-    const posts = await Post.find({ area: area.toLowerCase() });
+    const posts = await Post.find({ area: area });
     res.status(200).json(posts);
   } catch (error) {
     console.error("Error fetching posts by area:", error);

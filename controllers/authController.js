@@ -30,9 +30,11 @@ export const signup = async (req, res) => {
     await user.save();
 
     // Send verification email
-    const verificationLink = `http://localhost:5000/auth/verify-email?token=${verificationToken}`;
+    // const verificationLink = `http://localhost:5000/auth/verify-email?token=${verificationToken}`;
+    const verificationLink = `https://homemate-server-production.up.railway.app/auth/verify-email?token=${verificationToken}`;
 
-    sendEmail(email, verificationLink);
+
+    sendEmail(email, verificationLink, user.firstName);
 
     res.status(200).json({
       message:
@@ -48,22 +50,22 @@ export const verifyEmail = async (req, res) => {
   const { token } = req.query;
 
   try {
-    // Find user by verification token
     const user = await User.findOne({ verificationToken: token });
     if (!user) {
       return res.status(400).send("Invalid token");
     }
 
-    // Verify email and clear token
     user.isVerified = true;
     user.verificationToken = null;
     await user.save();
 
-    res.status(200).send("Email verified successfully");
+    const successMessage = encodeURIComponent("Email verified successfully. You can now log in.");
+    res.redirect(`https://homemate-one.vercel.app/login?message=${successMessage}`);
   } catch (error) {
     res.status(400).send("Error verifying email");
   }
 };
+
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
